@@ -1,0 +1,34 @@
+
+input::-webkit-input-placeholder {
+    color: #aaa;
+}
+input:-moz-placeholder {
+    color: #aaa;
+}
+input::-moz-placeholder {
+    color: #aaa;
+}
+input:-ms-input-placeholder {
+    color: #aaa;
+}
+
+.swagger-ui button, .swagger-ui input, .swagger-ui optgroup, .swagger-ui select, .swagger-ui textarea {
+    font-size: 90% !important;
+}
+
+.swagger-ui .markdown p, .swagger-ui .markdown pre, .swagger-ui .renderedMarkdown p, .swagger-ui .renderedMarkdown pre {
+    margin: 0 0 5px 0;
+}
+
+.swagger-ui .parameter__extension, .swagger-ui .parameter__in {
+    font-style: normal !important;
+}
+
+.swagger-ui .parameters-col_description input[type=text] {
+    max-width: 400px;
+}
+
+.swagger-ui table tbody tr td:first-of-type {
+    min-width: 100px !important;
+}
+
