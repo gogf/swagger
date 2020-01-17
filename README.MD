@@ -15,31 +15,29 @@ Download and install gf cli tool: https://github.com/gogf/gf-cli
 go get -u github.com/gogf/gf-swagger
 ```
 
-### 3. Produce swagger.json
+### 3. Produce and pack swagger.json
 
 Use command `gf swagger --pack` parses and produces the `/swagger/swagger.json` file and packs it to `/data/data-swagger.go`.
 
-> You can also use `gf run main.go --swagger` running your codes with hot-compiled-like feature and automatically packs the swagger files into your project.
+You can also use `gf run main.go --swagger -y` running your codes with hot-compiled-like feature and automatically packs the swagger files into your project.
 
-#### 4. Use the swagger
+#### 4. Use the swagger plugin
 
 Install the swagger using as plugin:
 
 ```go
-package boot
+package main
 
 import (
 	"github.com/gogf/gf-swagger/swagger"
 	"github.com/gogf/gf/frame/g"
 )
 
-func init() {
+func main() {
 	s := g.Server()
-	s.Plugin(&swagger.Swagger{
-		Description:   g.Cfg().GetString("swagger.description"),
-		BasicAuthUser: g.Cfg().GetString("swagger.user"),
-		BasicAuthPass: g.Cfg().GetString("swagger.pass"),
-	})
+	s.Plugin(&swagger.Swagger{})
+    s.SetPort(8199)
+    s.Run()
 }
 
 ```
