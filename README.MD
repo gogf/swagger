@@ -1,110 +1,44 @@
 # gf-swagger
 
-gf middleware to automatically generate RESTful API documentation with Swagger 2.0.
+Provides swagger UI resource files for Swagger 2.0 API service.
 
 ## Usage
 
-### Start using it
-1. Add comments to your API source code, [See Declarative Comments Format](https://swaggo.github.io/swaggo.io/declarative_comments_format/).
-2. Download [Swag](https://github.com/swaggo/swag) for Go by using:
+### 1. Install gf cli tool
+
+Download and install gf cli tool: https://github.com/gogf/gf-cli
+
+
+### 2. Install gf-swagger
+
 ```sh
-$ go get -u github.com/swaggo/swag/cmd/swag
+go get -u github.com/gogf/gf-swagger
 ```
 
-3. Run the [Swag](https://github.com/swaggo/swag) in your Go project root folder which contains `main.go` file, [Swag](https://github.com/swaggo/swag) will parse comments and generate required files(`docs` folder and `docs/doc.go`).
-```sh
-$ swag init
-```
-4. Download [gf-swagger](https://github.com/gogf/gf-swagger) by using:
-```sh
-$ go get -u github.com/gogf/gf-swagger
-$ go get -u github.com/swaggo/files
-```
-And import following in your code:
+### 3. Produce swagger.json
 
-```go
-import "github.com/gogf/gf-swagger" // gf-swagger middleware
-import "github.com/swaggo/files"    // swagger embed files
+Use command `gf swagger` parses and produces the `/swagger/swaager.json` file.
 
-```
+> You can also use `gf swagger -s 8080` automatically parsing and producing `swagger.json` file when codes change in development.
 
-### Canonical example:
+#### 4. Pack swagger.json
+
+Use gf cli tool command `gf pack swagger boot/swagger.go -n boot -p=swagger` packing the swagger.json file 
+to binary in package `boot`.
+
+#### 5. Use the swagger
 
 ```go
 package main
 
 import (
-	"github.com/gogf/gf-swagger"
+	_ "github.com/gogf/gf-swagger/swagger"
 	"github.com/gogf/gf/frame/g"
-	"github.com/swaggo/files"
-
-	_ "github.com/gogf/gf-swagger/example/basic/docs"
 )
 
-// @title Swagger Example API
-// @version 1.0
-// @description This is a sample server Petstore server.
-// @termsOfService http://swagger.io/terms/
-
-// @contact.name API Support
-// @contact.url http://www.swagger.io/support
-// @contact.email support@swagger.io
-
-// @license.name Apache 2.0
-// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
-
-// @host petstore.swagger.io
-// @BasePath /v2
 func main() {
-	s := g.Server()
-	s.SetPort(8199)
-	//url := gfSwagger.URL("http://localhost:8199/swagger/doc.json")
-	s.BindHandler("/swagger/*any", gfSwagger.WrapHandler(swaggerFiles.Handler))
-	s.Run()
+	g.Server().AddStaticPath("/swagger", "swagger")
+	g.Server().Run()
 }
 ```
 
-5. Run it, and browser to http://localhost:8080/swagger/index.html, you can see Swagger 2.0 Api documents.
-
-![swagger_index.html](https://user-images.githubusercontent.com/8943871/60704329-b7ab0680-9f36-11e9-9184-5c638c05e9c5.png)
-
-6. If you want to disable swagger when some environment variable is set, use `DisablingWrapHandler`
-
-### Example with disabling:
-
-```go
-package main
-
-import (
-	"github.com/gogf/gf-swagger"
-	"github.com/gogf/gf/frame/g"
-	"github.com/swaggo/files"
-
-	_ "github.com/gogf/gf-swagger/example/basic/docs"
-)
-
-// @title Swagger Example API
-// @version 1.0
-// @description This is a sample server Petstore server.
-// @termsOfService http://swagger.io/terms/
-
-// @contact.name API Support
-// @contact.url http://www.swagger.io/support
-// @contact.email support@swagger.io
-
-// @license.name Apache 2.0
-// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
-
-// @host petstore.swagger.io
-// @BasePath /v2
-func main() {
-	s := g.Server()
-	s.SetPort(8199)
-	//url := gfSwagger.URL("http://localhost:8199/swagger/doc.json")
-	s.BindHandler("/swagger/*any", gfSwagger.DisablingWrapHandler(swaggerFiles.Handler, "NAME_OF_ENV_VARIABLE"))
-	s.Run()
-}
-```
-
-Then, if you set envioment variable `NAME_OF_ENV_VARIABLE` to anything, `/swagger/*any`
-will respond 404, just like when route unspecified.

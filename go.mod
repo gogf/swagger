@@ -1,4 +1,4 @@
-module github.com/gogf/gswagger
+module github.com/gogf/gf-swagger
 
 require github.com/gogf/gf v1.11.2
 
