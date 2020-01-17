@@ -1,6 +1,6 @@
 # gf-swagger
 
-Provides swagger UI resource files for Swagger 2.0 API service.
+Provides swagger API document feature for GoFrame project.
 
 ## Usage
 
@@ -17,28 +17,32 @@ go get -u github.com/gogf/gf-swagger
 
 ### 3. Produce swagger.json
 
-Use command `gf swagger` parses and produces the `/swagger/swaager.json` file.
+Use command `gf swagger --pack` parses and produces the `/swagger/swagger.json` file and packs it to `/data/data-swagger.go`.
 
-> You can also use `gf swagger -s 8080` automatically parsing and producing `swagger.json` file when codes change in development.
+> You can also use `gf run main.go --swagger` running your codes with hot-compiled-like feature and automatically packs the swagger files into your project.
 
-#### 4. Pack swagger.json
+#### 4. Use the swagger
 
-Use gf cli tool command `gf pack swagger boot/swagger.go -n boot -p=swagger` packing the swagger.json file 
-to binary in package `boot`.
-
-#### 5. Use the swagger
+Install the swagger using as plugin:
 
 ```go
-package main
+package boot
 
 import (
-	_ "github.com/gogf/gf-swagger/swagger"
+	"github.com/gogf/gf-swagger/swagger"
 	"github.com/gogf/gf/frame/g"
 )
 
-func main() {
-	g.Server().AddStaticPath("/swagger", "swagger")
-	g.Server().Run()
+func init() {
+	s := g.Server()
+	s.Plugin(&swagger.Swagger{
+		Description:   g.Cfg().GetString("swagger.description"),
+		BasicAuthUser: g.Cfg().GetString("swagger.user"),
+		BasicAuthPass: g.Cfg().GetString("swagger.pass"),
+	})
 }
+
 ```
+
+Start your server and enjoy!
 
