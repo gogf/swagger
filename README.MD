@@ -51,6 +51,7 @@ As the swagger files are parsed and produced by third party tool,
 you can get details about comment at: https://github.com/swaggo/swag .
 
 GF swagger feature also supports configuration from file with `swagger` node.
-The configuration items of the node please refer to the attributes of Swagger struct: 
+Supported configuration item names of the node please refer to the attribute names of Swagger struct: 
+https://godoc.org/github.com/gogf/gf-swagger/swagger
 
 

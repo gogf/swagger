@@ -17,15 +17,15 @@ import (
 
 // Swagger is the struct for swagger feature management.
 type Swagger struct {
-	Title          string
-	Version        string
-	Schemes        []string
-	Host           string
-	BasicPath      string
-	TermsOfService string
-	Description    string
-	BasicAuthUser  string `c:"user"`
-	BasicAuthPass  string `c:"pass"`
+	Title          string   // Title of the swagger API.
+	Version        string   // Version of the swagger API.
+	Schemes        []string // Supported schemes of the swagger API like "http", "https".
+	Host           string   // The host of the swagger APi like "127.0.0.1", "www.mydomain.com"
+	BasicPath      string   // The URI for the swagger API like "/", "v1", "v2".
+	TermsOfService string   // As the attribute name.
+	Description    string   // Detail description of the swagger API.
+	BasicAuthUser  string   `c:"user"` // HTTP basic authentication username.
+	BasicAuthPass  string   `c:"pass"` // HTTP basic authentication password.
 }
 
 // Install installs the swagger to server.
