@@ -8,22 +8,36 @@ package swagger
 import (
 	_ "github.com/gogf/gf-swagger/boot"
 	"github.com/gogf/gf/encoding/gjson"
+	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
 	"github.com/gogf/gf/os/gfile"
 	"github.com/gogf/gf/text/gstr"
+	"github.com/gogf/gf/util/gconv"
 )
 
 // Swagger is the struct for swagger feature management.
 type Swagger struct {
-	Schemes       []string
-	Description   string
-	BasicAuthUser string
-	BasicAuthPass string
+	Title          string
+	Version        string
+	Schemes        []string
+	Host           string
+	BasicPath      string
+	TermsOfService string
+	Description    string
+	BasicAuthUser  string `c:"user"`
+	BasicAuthPass  string `c:"pass"`
 }
 
 // Install installs the swagger to server.
 func (swagger *Swagger) Install(s *ghttp.Server) error {
+	// Retrieve the configuration map and assign it to swagger object.
+	m := g.Cfg().GetMap("swagger")
+	if m != nil {
+		gconv.Struct(m, swagger)
+	}
+	// The swagger resource files are served as static file service.
 	s.AddStaticPath("/swagger", "swagger")
+	// It here uses HOOK feature handling basic auth authentication and swagger.json modification.
 	s.Group("/swagger", func(group *ghttp.RouterGroup) {
 		group.Hook("/*", ghttp.HOOK_BEFORE_SERVE, func(r *ghttp.Request) {
 			if !r.BasicAuth(swagger.BasicAuthUser, swagger.BasicAuthPass) {
@@ -38,14 +52,27 @@ func (swagger *Swagger) Install(s *ghttp.Server) error {
 					content = gfile.GetBytes(r.StaticFile.Path)
 				}
 				j, _ := gjson.LoadContent(content)
-				if !j.Contains("host") || gstr.Contains(j.GetString("host"), "{") {
+				if swagger.Host != "" {
+					j.Set("host", swagger.Host)
+				} else if !j.Contains("host") || gstr.Contains(j.GetString("host"), "{") {
 					j.Set("host", r.GetHost())
 				}
-				if !j.Contains("basePath") || gstr.Contains(j.GetString("basePath"), "{") {
+				if swagger.BasicPath != "" {
+					j.Set("basePath", swagger.BasicPath)
+				} else if !j.Contains("basePath") || gstr.Contains(j.GetString("basePath"), "{") {
 					j.Set("basePath", "/")
 				}
-				if swagger.Schemes != nil {
+				if len(swagger.Schemes) > 0 {
 					j.Set("schemes", swagger.Schemes)
+				}
+				if swagger.Title != "" {
+					j.Set("info.title", swagger.Title)
+				}
+				if swagger.Version != "" {
+					j.Set("info.version", swagger.Version)
+				}
+				if swagger.TermsOfService != "" {
+					j.Set("info.termsOfService", swagger.TermsOfService)
 				}
 				if swagger.Description != "" {
 					j.Set("info.description", swagger.Description)
