@@ -12,6 +12,9 @@ input:-ms-input-placeholder {
     color: #aaa;
 }
 
+.swagger-ui .parameter__name {
+    font-weight: bold !important;
+}
 .swagger-ui button, .swagger-ui input, .swagger-ui optgroup, .swagger-ui select, .swagger-ui textarea {
     font-size: 90% !important;
 }
