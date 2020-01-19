@@ -55,7 +55,7 @@ func (swagger *Swagger) Install(s *ghttp.Server) error {
 				if swagger.Host != "" {
 					j.Set("host", swagger.Host)
 				} else if !j.Contains("host") || gstr.Contains(j.GetString("host"), "{") {
-					j.Set("host", r.GetHost())
+					j.Set("host", r.Host)
 				}
 				if swagger.BasicPath != "" {
 					j.Set("basePath", swagger.BasicPath)
