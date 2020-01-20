@@ -6,13 +6,17 @@
 package swagger
 
 import (
+	"fmt"
 	_ "github.com/gogf/gf-swagger/boot"
 	"github.com/gogf/gf/encoding/gjson"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
+	"github.com/gogf/gf/os/gcache"
 	"github.com/gogf/gf/os/gfile"
 	"github.com/gogf/gf/text/gstr"
 	"github.com/gogf/gf/util/gconv"
+	"net/http"
+	"time"
 )
 
 // Swagger is the struct for swagger feature management.
@@ -28,7 +32,13 @@ type Swagger struct {
 	BasicAuthPass  string   `c:"pass"` // HTTP basic authentication password.
 }
 
-// Install installs the swagger to server.
+const (
+	MaxAuthAttempts    = 10          // Max authentication count for failure try.
+	AuthFailedInterval = time.Minute // Authentication retry interval after last failed.
+)
+
+// Install installs the swagger to server as a plugin.
+// It implements the interface ghttp.Plugin.
 func (swagger *Swagger) Install(s *ghttp.Server) error {
 	// Retrieve the configuration map and assign it to swagger object.
 	m := g.Cfg().GetMap("swagger")
@@ -40,8 +50,22 @@ func (swagger *Swagger) Install(s *ghttp.Server) error {
 	// It here uses HOOK feature handling basic auth authentication and swagger.json modification.
 	s.Group("/swagger", func(group *ghttp.RouterGroup) {
 		group.Hook("/*", ghttp.HOOK_BEFORE_SERVE, func(r *ghttp.Request) {
-			if !r.BasicAuth(swagger.BasicAuthUser, swagger.BasicAuthPass) {
-				r.ExitAll()
+			if swagger.BasicAuthUser != "" {
+				// Authentication security checks.
+				authCacheKey := fmt.Sprintf(`swagger_auth_failed_%s`, r.GetClientIp())
+				authCount := gconv.Int(gcache.Get(authCacheKey))
+				if authCount > MaxAuthAttempts {
+					r.Response.WriteStatus(
+						http.StatusForbidden,
+						"max authentication count exceeds, please try again in one minute!",
+					)
+					r.ExitAll()
+				}
+				// Basic authentication.
+				if !r.BasicAuth(swagger.BasicAuthUser, swagger.BasicAuthPass) {
+					gcache.Set(authCacheKey, authCount+1, AuthFailedInterval)
+					r.ExitAll()
+				}
 			}
 			// Modify the swagger.json.
 			if r.StaticFile != nil && gfile.Basename(r.URL.Path) == "swagger.json" {
