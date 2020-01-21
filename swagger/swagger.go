@@ -21,21 +21,50 @@ import (
 
 // Swagger is the struct for swagger feature management.
 type Swagger struct {
-	Title          string   // Title of the swagger API.
-	Version        string   // Version of the swagger API.
-	Schemes        []string // Supported schemes of the swagger API like "http", "https".
-	Host           string   // The host of the swagger APi like "127.0.0.1", "www.mydomain.com"
-	BasicPath      string   // The URI for the swagger API like "/", "v1", "v2".
-	TermsOfService string   // As the attribute name.
-	Description    string   // Detail description of the swagger API.
-	BasicAuthUser  string   `c:"user"` // HTTP basic authentication username.
-	BasicAuthPass  string   `c:"pass"` // HTTP basic authentication password.
+	Info          SwaggerInfo // Swagger information.
+	Schemes       []string    // Supported schemes of the swagger API like "http", "https".
+	Host          string      // The host of the swagger APi like "127.0.0.1", "www.mydomain.com"
+	BasicPath     string      // The URI for the swagger API like "/", "v1", "v2".
+	BasicAuthUser string      `c:"user"` // HTTP basic authentication username.
+	BasicAuthPass string      `c:"pass"` // HTTP basic authentication password.
+}
+
+// SwaggerInfo is the information field for swagger.
+type SwaggerInfo struct {
+	Title          string // Title of the swagger API.
+	Version        string // Version of the swagger API.
+	TermsOfService string // As the attribute name.
+	Description    string // Detail description of the swagger API.
 }
 
 const (
+	Name               = "gf-swagger"
+	Author             = "john@goframe.org"
+	Version            = "v1.0.0"
+	Description        = "gf-swagger provides swagger API document feature for GoFrame project. https://github.com/gogf/gf-swagger"
 	MaxAuthAttempts    = 10          // Max authentication count for failure try.
 	AuthFailedInterval = time.Minute // Authentication retry interval after last failed.
 )
+
+// Name returns the name of the plugin.
+func (swagger *Swagger) Name() string {
+	return Name
+}
+
+// Author returns the author of the plugin.
+func (swagger *Swagger) Author() string {
+	return Author
+}
+
+// Version returns the version of the plugin.
+func (swagger *Swagger) Version() string {
+	return Version
+}
+
+// Description returns the description of the plugin.
+func (swagger *Swagger) Description() string {
+	return Description
+}
 
 // Install installs the swagger to server as a plugin.
 // It implements the interface ghttp.Plugin.
@@ -43,7 +72,9 @@ func (swagger *Swagger) Install(s *ghttp.Server) error {
 	// Retrieve the configuration map and assign it to swagger object.
 	m := g.Cfg().GetMap("swagger")
 	if m != nil {
-		gconv.Struct(m, swagger)
+		if err := gconv.StructDeep(m, swagger); err != nil {
+			s.Logger().Fatal(err)
+		}
 	}
 	// The swagger resource files are served as static file service.
 	s.AddStaticPath("/swagger", "swagger")
@@ -89,17 +120,17 @@ func (swagger *Swagger) Install(s *ghttp.Server) error {
 				if len(swagger.Schemes) > 0 {
 					j.Set("schemes", swagger.Schemes)
 				}
-				if swagger.Title != "" {
-					j.Set("info.title", swagger.Title)
+				if swagger.Info.Title != "" {
+					j.Set("info.title", swagger.Info.Title)
 				}
-				if swagger.Version != "" {
-					j.Set("info.version", swagger.Version)
+				if swagger.Info.Version != "" {
+					j.Set("info.version", swagger.Info.Version)
 				}
-				if swagger.TermsOfService != "" {
-					j.Set("info.termsOfService", swagger.TermsOfService)
+				if swagger.Info.TermsOfService != "" {
+					j.Set("info.termsOfService", swagger.Info.TermsOfService)
 				}
-				if swagger.Description != "" {
-					j.Set("info.description", swagger.Description)
+				if swagger.Info.Description != "" {
+					j.Set("info.description", swagger.Info.Description)
 				}
 				r.Response.WriteJson(j.MustToJson())
 				r.ExitAll()
