@@ -7,7 +7,9 @@ package swagger
 
 import (
 	"fmt"
-	_ "github.com/gogf/gf-swagger/boot"
+	"net/http"
+	"time"
+
 	"github.com/gogf/gf/encoding/gjson"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
@@ -15,8 +17,8 @@ import (
 	"github.com/gogf/gf/os/gfile"
 	"github.com/gogf/gf/text/gstr"
 	"github.com/gogf/gf/util/gconv"
-	"net/http"
-	"time"
+
+	_ "github.com/gogf/gf-swagger/boot"
 )
 
 // Swagger is the struct for swagger feature management.
@@ -73,7 +75,7 @@ func (swagger *Swagger) Install(s *ghttp.Server) error {
 	m := g.Cfg().GetMap("swagger")
 	if m != nil {
 		if err := gconv.StructDeep(m, swagger); err != nil {
-			s.Logger().Fatal(err)
+			g.Log().Fatal(err)
 		}
 	}
 	// The swagger resource files are served as static file service.
