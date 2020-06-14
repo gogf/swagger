@@ -29,7 +29,7 @@ Install the swagger using as plugin:
 package main
 
 import (
-	"github.com/gogf/gf/frame/g"
+    "github.com/gogf/gf/frame/g"
     "github.com/gogf/swagger"
 )
 
