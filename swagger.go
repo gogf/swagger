@@ -1,13 +1,12 @@
 // Package swagger provides swagger UI resource files for swagger API service.
 //
 // Should be used with gf cli tool:
-// gf pack public boot/data-packed.go -n boot -p=swagger -y
+// gf pack public ./public-packed.go -p=swagger -y
 //
 package swagger
 
 import (
 	"fmt"
-	_ "github.com/gogf/gf-swagger/boot"
 	"github.com/gogf/gf/encoding/gjson"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
