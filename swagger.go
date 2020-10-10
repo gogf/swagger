@@ -39,7 +39,7 @@ type SwaggerInfo struct {
 const (
 	Name               = "gf-swagger"
 	Author             = "john@goframe.org"
-	Version            = "v1.0.3"
+	Version            = "v1.0.4"
 	Description        = "gf-swagger provides swagger API document feature for GoFrame project. https://github.com/gogf/gf-swagger"
 	MaxAuthAttempts    = 10          // Max authentication count for failure try.
 	AuthFailedInterval = time.Minute // Authentication retry interval after last failed.
@@ -82,8 +82,11 @@ func (swagger *Swagger) Install(s *ghttp.Server) error {
 		group.Hook("/*", ghttp.HOOK_BEFORE_SERVE, func(r *ghttp.Request) {
 			if swagger.BasicAuthUser != "" {
 				// Authentication security checks.
-				authCacheKey := fmt.Sprintf(`swagger_auth_failed_%s`, r.GetClientIp())
-				authCount := gconv.Int(gcache.Get(authCacheKey))
+				var (
+					authCacheKey = fmt.Sprintf(`swagger_auth_failed_%s`, r.GetClientIp())
+					v, _         = gcache.GetVar(authCacheKey)
+					authCount    = v.Int()
+				)
 				if authCount > MaxAuthAttempts {
 					r.Response.WriteStatus(
 						http.StatusForbidden,
