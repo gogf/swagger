@@ -1,7 +1,7 @@
 module github.com/gogf/swagger
 
 require (
-	github.com/gogf/gf v1.13.8-0.20201010060010-09ce105eeeab
+	github.com/gogf/gf v1.14.0
 	golang.org/x/sys v0.0.0-20200515095857-1151b9dac4a9 // indirect
 )
 

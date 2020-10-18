@@ -39,7 +39,7 @@ type SwaggerInfo struct {
 const (
 	Name               = "gf-swagger"
 	Author             = "john@goframe.org"
-	Version            = "v1.0.4"
+	Version            = "v1.2.0"
 	Description        = "gf-swagger provides swagger API document feature for GoFrame project. https://github.com/gogf/gf-swagger"
 	MaxAuthAttempts    = 10          // Max authentication count for failure try.
 	AuthFailedInterval = time.Minute // Authentication retry interval after last failed.
