@@ -71,7 +71,7 @@ func (swagger *Swagger) Install(s *ghttp.Server) error {
 	// Retrieve the configuration map and assign it to swagger object.
 	m := g.Cfg().GetMap("swagger")
 	if m != nil {
-		if err := gconv.StructDeep(m, swagger); err != nil {
+		if err := gconv.Struct(m, swagger); err != nil {
 			s.Logger().Fatal(err)
 		}
 	}
@@ -79,7 +79,7 @@ func (swagger *Swagger) Install(s *ghttp.Server) error {
 	s.AddStaticPath("/swagger", "swagger")
 	// It here uses HOOK feature handling basic auth authentication and swagger.json modification.
 	s.Group("/swagger", func(group *ghttp.RouterGroup) {
-		group.Hook("/*", ghttp.HOOK_BEFORE_SERVE, func(r *ghttp.Request) {
+		group.Hook("/*", ghttp.HookBeforeServe, func(r *ghttp.Request) {
 			if swagger.BasicAuthUser != "" {
 				// Authentication security checks.
 				var (
