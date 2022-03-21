@@ -1,5 +1,5 @@
-module github.com/gogf/swagger
+module github.com/gogf/swagger/v2
 
-go 1.14
+go 1.15
 
-require github.com/gogf/gf v1.16.4
+require github.com/gogf/gf/v2 v2.0.4

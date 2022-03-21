@@ -1,3 +1,6 @@
+> This repository is not maintained anymore. 
+> Please use the latest v2 version of `goframe` for automatic API generating and swagger UI feature.
+
 # swagger
 
 Provides swagger API document feature for GoFrame project.
@@ -6,13 +9,13 @@ Provides swagger API document feature for GoFrame project.
 
 ### 1. Install gf cli tool
 
-Download and install gf cli tool: https://github.com/gogf/gf-cli
+Download and install gf cli tool: https://github.com/gogf/gf/tree/master/cmd/gf
 
 
 ### 2. Install gf-swagger
 
 ```sh
-go get -u github.com/gogf/swagger
+go get -u github.com/gogf/swagger/v2
 ```
 
 ### 3. Produce and pack swagger.json
@@ -29,8 +32,8 @@ Install the swagger using as plugin:
 package main
 
 import (
-    "github.com/gogf/gf/frame/g"
-    "github.com/gogf/swagger"
+    "github.com/gogf/gf/v2/frame/g"
+    "github.com/gogf/swagger/v2"
 )
 
 func main() {
@@ -52,6 +55,6 @@ you can get details about comment at: https://github.com/swaggo/swag .
 
 GF swagger feature also supports configuration from file with `swagger` node.
 Supported configuration item names of the node please refer to the attribute names of Swagger struct: 
-https://godoc.org/github.com/gogf/swagger
+https://godoc.org/github.com/gogf/swagger/v2
 
 

@@ -7,15 +7,17 @@ package swagger
 
 import (
 	"fmt"
-	"github.com/gogf/gf/encoding/gjson"
-	"github.com/gogf/gf/frame/g"
-	"github.com/gogf/gf/net/ghttp"
-	"github.com/gogf/gf/os/gcache"
-	"github.com/gogf/gf/os/gfile"
-	"github.com/gogf/gf/text/gstr"
-	"github.com/gogf/gf/util/gconv"
 	"net/http"
 	"time"
+
+	"github.com/gogf/gf/v2/encoding/gjson"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/net/ghttp"
+	"github.com/gogf/gf/v2/os/gcache"
+	"github.com/gogf/gf/v2/os/gctx"
+	"github.com/gogf/gf/v2/os/gfile"
+	"github.com/gogf/gf/v2/text/gstr"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 // Swagger is the struct for swagger feature management.
@@ -68,11 +70,12 @@ func (swagger *Swagger) Description() string {
 // Install installs the swagger to server as a plugin.
 // It implements the interface ghttp.Plugin.
 func (swagger *Swagger) Install(s *ghttp.Server) error {
+	var ctx = gctx.New()
 	// Retrieve the configuration map and assign it to swagger object.
-	m := g.Cfg().GetMap("swagger")
+	m := g.Cfg().MustGet(ctx, "swagger").Map()
 	if m != nil {
 		if err := gconv.Struct(m, swagger); err != nil {
-			s.Logger().Fatal(err)
+			s.Logger().Fatal(ctx, err)
 		}
 	}
 	// The swagger resource files are served as static file service.
@@ -84,8 +87,7 @@ func (swagger *Swagger) Install(s *ghttp.Server) error {
 				// Authentication security checks.
 				var (
 					authCacheKey = fmt.Sprintf(`swagger_auth_failed_%s`, r.GetClientIp())
-					v, _         = gcache.GetVar(authCacheKey)
-					authCount    = v.Int()
+					authCount    = gcache.MustGet(ctx, authCacheKey).Int()
 				)
 				if authCount > MaxAuthAttempts {
 					r.Response.WriteStatus(
@@ -96,7 +98,7 @@ func (swagger *Swagger) Install(s *ghttp.Server) error {
 				}
 				// Basic authentication.
 				if !r.BasicAuth(swagger.BasicAuthUser, swagger.BasicAuthPass) {
-					gcache.Set(authCacheKey, authCount+1, AuthFailedInterval)
+					_ = gcache.Set(ctx, authCacheKey, authCount+1, AuthFailedInterval)
 					r.ExitAll()
 				}
 			}
@@ -111,12 +113,12 @@ func (swagger *Swagger) Install(s *ghttp.Server) error {
 				j, _ := gjson.LoadContent(content)
 				if swagger.Host != "" {
 					j.Set("host", swagger.Host)
-				} else if !j.Contains("host") || gstr.Contains(j.GetString("host"), "{") {
+				} else if !j.Contains("host") || gstr.Contains(j.Get("host").String(), "{") {
 					j.Set("host", r.Host)
 				}
 				if swagger.BasicPath != "" {
 					j.Set("basePath", swagger.BasicPath)
-				} else if !j.Contains("basePath") || gstr.Contains(j.GetString("basePath"), "{") {
+				} else if !j.Contains("basePath") || gstr.Contains(j.Get("basePath").String(), "{") {
 					j.Set("basePath", "/")
 				}
 				if len(swagger.Schemes) > 0 {
