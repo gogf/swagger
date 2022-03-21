@@ -20,7 +20,7 @@ go get -u github.com/gogf/swagger/v2
 
 ### 3. Produce and pack swagger.json
 
-Use command `gf swagger --pack` parses and produces the `/swagger/swagger.json` file and packs it to `/packed/swagger.go`.
+Use `v1` version command `gf swagger --pack` parses and produces the `/swagger/swagger.json` file and packs it to `/packed/swagger.go`.
 
 > You can also use `gf run main.go --swagger -y` running your codes with hot-compiled-like feature and automatically packs the swagger files into your project.
 
