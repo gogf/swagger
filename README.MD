@@ -1,5 +1,10 @@
+> 👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣
+> 
 > This repository is not maintained anymore. 
+> 
 > Please use the latest v2 version of `goframe` for automatic API generating and swagger UI feature.
+> 
+> 👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣👣
 
 # swagger
 
